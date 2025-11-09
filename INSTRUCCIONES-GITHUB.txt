@@ -1,0 +1,62 @@
+# 🎯 INSTRUCCIONES RÁPIDAS PARA CREAR EL REPOSITORIO
+
+## Pasos Simples:
+
+### 1. Abre tu navegador y ve a:
+```
+https://github.com/new
+```
+
+### 2. Inicia sesión con:
+```
+Usuario: joseluiscruz-hub
+```
+
+### 3. Llena el formulario:
+
+**Repository name:**
+```
+checklist-de-seguridad-para-montacargas
+```
+
+**Description:**
+```
+Sistema de Inspección de Seguridad para Montacargas - Coca-Cola FEMSA
+```
+
+**Visibility:**
+- Selecciona: **Public** ✅
+
+**Initialize repository:**
+- ❌ NO marques nada (deja todo sin marcar)
+
+### 4. Click en:
+```
+Create repository
+```
+
+### 5. Regresa aquí y escribe:
+```
+"repositorio creado"
+```
+
+---
+
+## ✅ Ya Configurado:
+
+- Usuario: joseluiscruz-hub
+- Email: udx082310045@udemex.edu.mx
+- Remote: https://github.com/joseluiscruz-hub/checklist-de-seguridad-para-montacargas.git
+
+**Solo espero que crees el repo para hacer push automáticamente.**
+
+---
+
+## 🚀 Después del Push:
+
+1. Ve a: Settings → Pages
+2. Source: **GitHub Actions**
+3. Espera 2-5 minutos
+4. Tu app estará en:
+   **https://joseluiscruz-hub.github.io/checklist-de-seguridad-para-montacargas/**
+
