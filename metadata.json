@@ -1,0 +1,7 @@
+{
+  "name": "Checklist de Seguridad para Montacargas",
+  "description": "Una PWA avanzada con funcionalidad offline para checklists de seguridad de montacargas. Incluye escaneo de códigos QR, evidencia fotográfica, datos históricos y un panel de estadísticas.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}

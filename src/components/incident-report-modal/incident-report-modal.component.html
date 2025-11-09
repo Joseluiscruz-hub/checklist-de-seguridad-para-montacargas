@@ -1,0 +1,65 @@
+<div class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 animate-fade-in" (click)="onClose()">
+  <div class="bg-white dark:bg-dark-card rounded-xl shadow-2xl w-full max-w-lg max-h-[90vh] flex flex-col m-4" (click)="$event.stopPropagation()">
+    
+    <header class="p-4 border-b dark:border-dark-accent">
+      <div class="flex justify-between items-center">
+        <h2 class="text-xl font-bold text-gray-800 dark:text-white">Reportar Incidencia Grave</h2>
+        <button (click)="onClose()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+          <i class="fas fa-times text-2xl"></i>
+        </button>
+      </div>
+    </header>
+
+    <main class="flex-grow overflow-y-auto p-4 space-y-4">
+      <div>
+        <label for="forkliftId" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Montacargas</label>
+        <select id="forkliftId" [ngModel]="report().forkliftId" (ngModelChange)="updateForkliftId($event)"
+              class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-coca-cola-red focus:ring focus:ring-coca-cola-red focus:ring-opacity-50 bg-gray-50 dark:bg-dark-accent dark:text-white">
+          <option value="" disabled>Seleccione un montacargas</option>
+          @for (forklift of forklifts(); track forklift.id) {
+            <option [value]="forklift.id">{{ forklift.name }}</option>
+          }
+        </select>
+      </div>
+      
+      <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nivel de Severidad</label>
+        <div class="mt-2 grid grid-cols-3 gap-2">
+          <button (click)="updateSeverity('Baja')" [class.bg-yellow-500]="report().severity === 'Baja'" [class.text-white]="report().severity === 'Baja'" class="py-2 px-4 rounded-md font-semibold transition-colors bg-gray-200 dark:bg-dark-accent">Baja</button>
+          <button (click)="updateSeverity('Media')" [class.bg-orange-500]="report().severity === 'Media'" [class.text-white]="report().severity === 'Media'" class="py-2 px-4 rounded-md font-semibold transition-colors bg-gray-200 dark:bg-dark-accent">Media</button>
+          <button (click)="updateSeverity('Alta')" [class.bg-red-600]="report().severity === 'Alta'" [class.text-white]="report().severity === 'Alta'" class="py-2 px-4 rounded-md font-semibold transition-colors bg-gray-200 dark:bg-dark-accent">Alta</button>
+        </div>
+      </div>
+
+      <div>
+        <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Descripción del Problema</label>
+        <textarea id="description" [ngModel]="report().description" (ngModelChange)="updateDescription($event)" rows="4" placeholder="Describa la falla o el problema en detalle..."
+                  class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-coca-cola-red focus:ring focus:ring-coca-cola-red focus:ring-opacity-50 bg-gray-50 dark:bg-dark-accent dark:text-white"></textarea>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Evidencia Fotográfica (Opcional)</label>
+        <div class="mt-2 flex items-center gap-4">
+          <button (click)="triggerPhotoUpload()" class="bg-gray-200 dark:bg-dark-accent hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 font-bold py-2 px-4 rounded-lg flex items-center gap-2">
+            <i class="fas fa-camera"></i>
+            <span>Adjuntar Foto</span>
+          </button>
+          @if (report().photo) {
+            <img [src]="report().photo" alt="Evidencia" class="w-20 h-20 object-cover rounded-lg shadow-md">
+          }
+          <input type="file" accept="image/*" capture="environment" id="incident-photo-upload" class="hidden" (change)="handlePhotoUpload($event)">
+        </div>
+      </div>
+    </main>
+    
+    <footer class="p-4 border-t dark:border-dark-accent bg-gray-50 dark:bg-dark-card/50">
+      <button (click)="onSave()" [disabled]="!isFormValid()" class="w-full bg-coca-cola-red text-white font-bold py-3 px-4 rounded-lg shadow-lg hover:bg-red-700 transition-colors disabled:bg-red-400 disabled:cursor-not-allowed">
+        Guardar Reporte
+      </button>
+       @if (!isFormValid()) {
+          <p class="text-center text-red-500 text-sm mt-2">Seleccione un montacargas y añada una descripción.</p>
+        }
+    </footer>
+
+  </div>
+</div>

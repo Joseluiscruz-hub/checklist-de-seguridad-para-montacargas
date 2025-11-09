@@ -1,0 +1,68 @@
+<div class="container mx-auto p-4 max-w-2xl">
+  <header class="mb-6">
+    <h1 class="text-3xl font-bold text-gray-800 dark:text-white">Ajustes</h1>
+    <p class="text-gray-600 dark:text-gray-400">Administre los ajustes de la aplicación.</p>
+  </header>
+
+  <div class="space-y-6">
+    <!-- Dark Mode Setting -->
+    <div class="bg-white dark:bg-dark-card rounded-lg shadow p-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-lg font-semibold text-gray-800 dark:text-white">Modo Oscuro</h3>
+          <p class="text-sm text-gray-500 dark:text-gray-400">Reduce la fatiga visual con poca luz.</p>
+        </div>
+        <button (click)="toggleTheme()" 
+                class="relative inline-flex items-center h-6 rounded-full w-11 transition-colors"
+                [class.bg-coca-cola-red]="isDarkMode()"
+                [class.bg-gray-300]="!isDarkMode()">
+          <span class="inline-block w-4 h-4 transform bg-white rounded-full transition-transform"
+                [class.translate-x-6]="isDarkMode()"
+                [class.translate-x-1]="!isDarkMode()"></span>
+        </button>
+      </div>
+    </div>
+
+     <!-- Data Sync Setting -->
+    <div class="bg-white dark:bg-dark-card rounded-lg shadow p-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-lg font-semibold text-gray-800 dark:text-white">Sincronización de Datos</h3>
+          <p class="text-sm text-gray-500 dark:text-gray-400">Sincronice sus datos de inspección con el servidor.</p>
+        </div>
+        <button (click)="syncData()" [disabled]="isSyncing()" class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 transition-colors disabled:bg-blue-400 disabled:cursor-not-allowed w-36 text-center">
+          @if (isSyncing()) {
+            <div class="flex items-center justify-center">
+              <i class="fas fa-spinner fa-spin mr-2"></i>
+              <span>Sincronizando...</span>
+            </div>
+          } @else {
+            <span>Sincronizar</span>
+          }
+        </button>
+      </div>
+    </div>
+
+    <!-- Data Management Setting -->
+    <div class="bg-white dark:bg-dark-card rounded-lg shadow p-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-lg font-semibold text-gray-800 dark:text-white">Gestión de Datos</h3>
+          <p class="text-sm text-gray-500 dark:text-gray-400">Elimine todos los datos de inspección almacenados localmente.</p>
+        </div>
+        <button (click)="clearData()" class="bg-red-600 text-white px-4 py-2 rounded-lg shadow hover:bg-red-700 transition-colors">
+          Limpiar Datos
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Notification -->
+@if (toastMessage()) {
+  <div class="fixed bottom-24 left-1/2 -translate-x-1/2 text-white py-2 px-6 rounded-full shadow-lg animate-fade-in-out"
+       [class.bg-gray-800]="!toastIsError()"
+       [class.bg-red-600]="toastIsError()">
+    {{ toastMessage() }}
+  </div>
+}

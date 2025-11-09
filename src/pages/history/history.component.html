@@ -1,0 +1,91 @@
+<div class="container mx-auto p-4 max-w-2xl">
+  <header class="mb-6">
+    <h1 class="text-3xl font-bold text-gray-800 dark:text-white">Historial de Inspecciones</h1>
+    <p class="text-gray-600 dark:text-gray-400">Revise las sesiones de inspección pasadas.</p>
+  </header>
+
+  @if (isLoading()) {
+    <div class="space-y-4">
+      @for (item of [1, 2, 3]; track item) {
+        <div class="bg-white dark:bg-dark-card rounded-lg shadow p-4 animate-pulse">
+          <div class="flex justify-between items-center">
+            <div>
+              <div class="h-5 bg-gray-300 dark:bg-gray-700 rounded w-48 mb-2"></div>
+              <div class="h-4 bg-gray-300 dark:bg-gray-700 rounded w-32"></div>
+            </div>
+            <div class="h-5 w-5 bg-gray-300 dark:bg-gray-700 rounded-full"></div>
+          </div>
+        </div>
+      }
+    </div>
+  } @else {
+    @if (sessions().length === 0) {
+      <div class="text-center py-10 bg-white dark:bg-dark-card rounded-lg shadow">
+        <i class="fas fa-box-open text-4xl text-gray-400 mb-4"></i>
+        <p class="text-gray-500 dark:text-gray-400">No se encontró historial.</p>
+        <p class="text-sm text-gray-400 dark:text-gray-500">Complete y guarde una sesión para verla aquí.</p>
+      </div>
+    } @else {
+      <div class="space-y-4">
+        @for (session of sessions(); track session.id) {
+          <div class="bg-white dark:bg-dark-card rounded-lg shadow overflow-hidden">
+            <button (click)="toggleSession(session.id)" class="w-full text-left p-4 flex justify-between items-center hover:bg-gray-50 dark:hover:bg-dark-accent transition-colors">
+              <div>
+                <p class="font-semibold text-lg text-gray-800 dark:text-white">{{ formatDate(session.id) }}</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400">{{ session.inspections.length }} inspecciones</p>
+              </div>
+              <i class="fas fa-chevron-down transition-transform" [class.rotate-180]="expandedSessionId() === session.id"></i>
+            </button>
+            
+            @if (expandedSessionId() === session.id) {
+              <div class="p-4 border-t dark:border-dark-accent bg-gray-50 dark:bg-dark-accent/50">
+                @for (inspection of session.inspections; track inspection.forkliftId) {
+                  <div class="mb-3 p-3 rounded-md bg-white dark:bg-dark-card shadow-sm">
+                    <div class="flex justify-between items-start">
+                      <div>
+                        <p class="font-bold">{{ inspection.forkliftName }} ({{ inspection.forkliftId }})</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">
+                          Inspector: {{ inspection.inspector }} | Tripulación: {{inspection.crew}} | Turno: {{ inspection.shift }} | Ubicación: {{ inspection.location }}
+                        </p>
+                      </div>
+                       @if (getInspectionStatus(inspection) === 'ok') {
+                          <span class="text-green-600 dark:text-green-400 font-bold text-sm">OK</span>
+                        } @else {
+                           <span class="text-red-600 dark:text-red-400 font-bold text-sm">INCIDENCIA</span>
+                        }
+                    </div>
+                    <div class="mt-2 text-sm space-y-1">
+                       @for (item of inspection.checklist; track item.id) {
+                         @if (item.status === 'issue') {
+                          <div class="flex items-start gap-2 p-1 bg-red-50 dark:bg-red-900/20 rounded">
+                            <i class="fas fa-exclamation-triangle text-red-500 mt-1"></i>
+                            <div>
+                               <div class="flex items-center gap-2">
+                                <p class="font-semibold">{{ item.label }}: <span class="font-normal">{{ item.comment }}</span></p>
+                                @if (item.photo) {
+                                  <i class="fas fa-camera text-coca-cola-red text-lg" title="Contiene evidencia fotográfica"></i>
+                                }
+                              </div>
+                              @if (item.photo) {
+                                <img [src]="item.photo" class="mt-1 w-24 h-24 object-cover rounded" alt="Evidencia">
+                              }
+                            </div>
+                          </div>
+                         }
+                       }
+                    </div>
+                  </div>
+                }
+                <div class="mt-4 pt-4 border-t dark:border-dark-accent text-right">
+                  <button (click)="generateReport(session)" class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 transition-colors">
+                    <i class="fas fa-print mr-2"></i>Generar Reporte
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+  }
+</div>

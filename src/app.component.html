@@ -1,0 +1,19 @@
+<div class="flex flex-col h-screen font-sans text-gray-800 dark:text-dark-text">
+  <main class="flex-grow overflow-y-auto pb-20">
+    <router-outlet></router-outlet>
+  </main>
+
+  <nav class="fixed bottom-0 left-0 right-0 bg-white dark:bg-dark-card border-t border-gray-200 dark:border-dark-accent shadow-lg">
+    <div class="flex justify-around max-w-lg mx-auto">
+      @for (item of navItems; track item.path) {
+        <a [routerLink]="item.path"
+           [class.text-coca-cola-red]="activeRoute() === item.path"
+           [class.text-gray-500]="activeRoute() !== item.path"
+           class="flex flex-col items-center justify-center w-full py-2 text-sm transition-colors duration-200 hover:text-coca-cola-red dark:hover:text-coca-cola-red">
+          <i class="fas {{ item.icon }} text-xl"></i>
+          <span>{{ item.label }}</span>
+        </a>
+      }
+    </div>
+  </nav>
+</div>
