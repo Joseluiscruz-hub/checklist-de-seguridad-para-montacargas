@@ -4,6 +4,95 @@
     <p class="text-gray-600 dark:text-gray-400">Revise las sesiones de inspección pasadas.</p>
   </header>
 
+  <!-- Alerta de almacenamiento -->
+  @if (storageWarning()) {
+    <div class="mb-4 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-400 dark:border-yellow-600 rounded-lg">
+      <p class="text-sm text-yellow-800 dark:text-yellow-200">{{ storageWarning() }}</p>
+    </div>
+  }
+
+  <!-- Filtros y Exportación -->
+  <div class="mb-6 bg-white dark:bg-dark-card rounded-lg shadow p-4">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-lg font-semibold text-gray-800 dark:text-white">
+        <i class="fas fa-filter mr-2"></i>Filtros
+      </h2>
+      <div class="flex gap-2">
+        <button 
+          (click)="exportCurrentData()"
+          class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-2">
+          <i class="fas fa-file-csv"></i>
+          Exportar CSV
+        </button>
+        <button 
+          (click)="exportStats()"
+          class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-2">
+          <i class="fas fa-chart-bar"></i>
+          Estadísticas
+        </button>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Desde</label>
+        <input 
+          type="date" 
+          [(ngModel)]="filterDateFrom"
+          class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-dark-accent dark:text-white">
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Hasta</label>
+        <input 
+          type="date" 
+          [(ngModel)]="filterDateTo"
+          class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-dark-accent dark:text-white">
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Inspector</label>
+        <input 
+          type="text" 
+          [(ngModel)]="filterInspector"
+          placeholder="Buscar por nombre..."
+          class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-dark-accent dark:text-white">
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Montacarga</label>
+        <input 
+          type="text" 
+          [(ngModel)]="filterForklift"
+          placeholder="Buscar montacarga..."
+          class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-dark-accent dark:text-white">
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Estado</label>
+        <select 
+          [(ngModel)]="filterStatus"
+          class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-dark-accent dark:text-white">
+          <option value="all">Todos</option>
+          <option value="ok">Solo OK</option>
+          <option value="issue">Solo con Incidencias</option>
+        </select>
+      </div>
+
+      <div class="flex items-end">
+        <button 
+          (click)="clearFilters()"
+          class="w-full px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white font-medium rounded-lg transition-colors">
+          <i class="fas fa-times mr-2"></i>Limpiar
+        </button>
+      </div>
+    </div>
+
+    <div class="mt-3 text-sm text-gray-600 dark:text-gray-400">
+      Mostrando <strong>{{ filteredSessions().length }}</strong> de <strong>{{ sessions().length }}</strong> sesiones
+    </div>
+  </div>
+
   @if (isLoading()) {
     <div class="space-y-4">
       @for (item of [1, 2, 3]; track item) {
@@ -19,15 +108,17 @@
       }
     </div>
   } @else {
-    @if (sessions().length === 0) {
+    @if (filteredSessions().length === 0) {
       <div class="text-center py-10 bg-white dark:bg-dark-card rounded-lg shadow">
         <i class="fas fa-box-open text-4xl text-gray-400 mb-4"></i>
-        <p class="text-gray-500 dark:text-gray-400">No se encontró historial.</p>
-        <p class="text-sm text-gray-400 dark:text-gray-500">Complete y guarde una sesión para verla aquí.</p>
+        <p class="text-gray-500 dark:text-gray-400">No se encontraron resultados con los filtros actuales.</p>
+        <button (click)="clearFilters()" class="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg">
+          Limpiar Filtros
+        </button>
       </div>
     } @else {
-      <div class="space-y-4">
-        @for (session of sessions(); track session.id) {
+        <div class="space-y-4">
+          @for (session of filteredSessions(); track session.id) {
           <div class="bg-white dark:bg-dark-card rounded-lg shadow overflow-hidden">
             <button (click)="toggleSession(session.id)" class="w-full text-left p-4 flex justify-between items-center hover:bg-gray-50 dark:hover:bg-dark-accent transition-colors">
               <div>
