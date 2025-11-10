@@ -22,7 +22,7 @@
           "configurations": {
             "production": {
               "outputHashing": "all",
-              "baseHref": "/checklist-de-seguridad-para-montacargas/"
+              "baseHref": "/"
             },
             "development": {
               "optimization": false,
