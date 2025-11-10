@@ -1,3 +1,4 @@
+# .github/workflows/deploy.yml (ref: 9168ae65ba204c89271c5e3f1c31f84b3fa91090)
 name: Build and Deploy to GitHub Pages (ChecklistM)
 
 on:
@@ -5,32 +6,47 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+  pages: write
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          persist-credentials: true    # <- importante: permite usar GITHUB_TOKEN para pushes
 
-      - name: Setup Node.js
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20.19'
-          cache: 'npm'
+          node-version: '18'
 
-      - name: Install dependencies
+      - name: Install deps
         run: npm ci
 
-      - name: Build (production)
-        run: npm run build:prod -- --base-href "/"
+      - name: Build
+        run: npm run build
 
-      - name: Ensure CNAME
-        run: echo ChecklistM.joseluiscruz.me > dist/CNAME
+      - name: Prepare gh-pages branch
+        run: |
+          # crea/actualiza rama gh-pages localmente con el contenido de build (ajusta publish_dir)
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout --orphan gh-pages || git switch gh-pages
+          git reset --hard
+          cp -R ./dist/* .   # <- ajusta según tu carpeta de salida (ej. public, build, dist)
+          git add -A
+          git commit -m "Deploy from Actions" || echo "No changes to commit"
 
-      - name: Deploy to gh-pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
-          cname: ChecklistM.joseluiscruz.me
-          commit_message: "ci: deploy to gh-pages (ChecklistM)"
+      - name: Use GITHUB_TOKEN for push
+        run: |
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+
+      - name: Push to gh-pages
+        run: |
+          git push --force origin gh-pages
