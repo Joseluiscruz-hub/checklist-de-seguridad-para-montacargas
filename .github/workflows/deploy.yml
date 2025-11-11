@@ -1,47 +1,76 @@
-name: Deploy
+name: Build and Deploy to GitHub Pages
 
 on:
   push:
     branches:
       - main
 
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
-          node-version: '16'
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
-      - name: Run build
+      - name: Build Angular app
         run: npm run build
+        env:
+          NODE_ENV: production
 
-      - name: Validate build output
+      - name: Verify build output
         run: |
-          if [ ! -d "build" ]; then
-            echo "Build failed: Output directory 'build' does not exist"
+          if [ ! -f "./dist/index.html" ]; then
+            echo "ERROR: dist/index.html not found!"
+            ls -la dist/ || echo "dist/ directory does not exist"
             exit 1
           fi
+          echo "✓ Build successful: dist/index.html found"
+          ls -lah dist/
 
-      - name: Deploy
+      - name: Setup git for gh-pages
         run: |
-          if [ -f "build/app.js" ]; then
-            echo "Deploying application..."
-            # Add your deployment commands here
-          else
-            echo "Deployment failed: 'app.js' not found"
-            exit 1
-          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      - name: Error handling
-        if: failure()
+      - name: Create gh-pages branch and deploy
         run: |
-          echo "Deployment encountered an error. Please check the logs for more information."
+          # Create a temporary directory for gh-pages content
+          mkdir -p ./gh-pages-temp
+          cp -r ./dist/* ./gh-pages-temp/
+          
+          # Switch to gh-pages branch
+          git checkout --orphan gh-pages-new || true
+          git reset --hard
+          
+          # Move content back and commit
+          cp -r ./gh-pages-temp/* .
+          rm -rf ./gh-pages-temp
+          
+          git add -A
+          git commit -m "Deploy: $(date '+%Y-%m-%d %H:%M:%S')" || echo "No changes to commit"
+
+      - name: Configure git remote
+        run: |
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+
+      - name: Push to gh-pages
+        run: |
+          git push --force origin gh-pages-new:gh-pages
+          echo "✓ Deployment successful!"
