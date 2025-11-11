@@ -7,7 +7,8 @@
     "dev": "ng serve",
     "build": "ng build",
     "build:prod": "ng build --configuration production",
-    "preview": "ng serve --configuration=production"
+    "preview": "ng serve --configuration=production",
+    "deploy": "npm run build:prod && gh-pages -d dist"
   },
   "dependencies": {
     "@angular/build": "^20.3.0",
@@ -26,6 +27,7 @@
   },
   "devDependencies": {
     "@types/node": "^22.14.0",
+    "gh-pages": "^6.3.0",
     "typescript": "~5.8.2",
     "vite": "^6.2.0"
   }
