@@ -34,12 +34,25 @@ jobs:
 
       - name: Prepare gh-pages branch
         run: |
-          # crea/actualiza rama gh-pages localmente con el contenido de build (ajusta publish_dir)
+          # Save build output
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          
+          # Save dist, CNAME and .nojekyll to temp location
+          mkdir -p /tmp/deploy
+          cp -R ./dist/. /tmp/deploy/
+          cp CNAME /tmp/deploy/ || true
+          cp .nojekyll /tmp/deploy/ || true
+          
+          # Checkout or create gh-pages branch
           git checkout --orphan gh-pages || git switch gh-pages
           git reset --hard
-          cp -R ./dist/* .   # <- ajusta según tu carpeta de salida (ej. public, build, dist)
+          git rm -rf . || true
+          
+          # Copy saved files back
+          cp -R /tmp/deploy/. .
+          
+          # Add and commit
           git add -A
           git commit -m "Deploy from Actions" || echo "No changes to commit"
 
