@@ -67,7 +67,25 @@ Los archivos compilados estarán en la carpeta `dist/`.
 
 ## 🌐 Despliegue en GitHub Pages
 
-El despliegue es automático mediante GitHub Actions:
+### Opción 1: Despliegue Interactivo (Recomendado)
+
+El método más rápido y sencillo:
+
+```bash
+# 1. Instala las dependencias
+npm install
+
+# 2. Despliega a GitHub Pages
+npm run deploy
+
+# 3. Confirma con 'y' cuando se te pida
+```
+
+El script interactivo te guiará paso a paso. Ver [QUICK-DEPLOY.md](QUICK-DEPLOY.md) para más detalles.
+
+### Opción 2: Despliegue Automático con GitHub Actions
+
+Push a la rama principal y GitHub Actions se encargará del resto:
 
 1. **Push a la rama principal:**
    ```bash
@@ -83,7 +101,7 @@ El despliegue es automático mediante GitHub Actions:
 
 3. **Habilitar GitHub Pages (solo la primera vez):**
    - Ve a Settings → Pages
-   - Source: GitHub Actions
+   - Source: Deploy from a branch → gh-pages (para Opción 1) o GitHub Actions (para Opción 2)
    - ¡Listo!
 
 ## 📱 Uso de la Aplicación
