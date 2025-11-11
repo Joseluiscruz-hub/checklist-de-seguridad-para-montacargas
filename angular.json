@@ -25,7 +25,7 @@
           "configurations": {
             "production": {
               "outputHashing": "all",
-              "baseHref": "/",
+              "baseHref": "/checklist-de-seguridad-para-montacargas/",
               "serviceWorker": "ngsw-config.json"
             },
             "development": {
