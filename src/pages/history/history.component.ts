@@ -1,22 +1,89 @@
-import { Component, ChangeDetectionStrategy, signal, inject, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, inject, OnInit, computed } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { DbService } from '../../services/db.service';
+import { ExportService } from '../../services/export.service';
+import { StorageService } from '../../services/storage.service';
 import { InspectionSession, Inspection, ChecklistItem } from '../../models/checklist.model';
 import { COCA_COLA_FEMSA_LOGO_BASE64 } from '../../assets/logo';
 
 @Component({
   selector: 'app-history',
+  imports: [FormsModule],
   templateUrl: './history.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HistoryComponent implements OnInit {
   private dbService = inject(DbService);
+  private exportService = inject(ExportService);
+  private storageService = inject(StorageService);
 
   sessions = signal<InspectionSession[]>([]);
   isLoading = signal(true);
   expandedSessionId = signal<number | null>(null);
 
+  // Filtros
+  filterDateFrom = signal('');
+  filterDateTo = signal('');
+  filterInspector = signal('');
+  filterStatus = signal<'all' | 'ok' | 'issue'>('all');
+  filterForklift = signal('');
+
+  // Computed: sesiones filtradas
+  filteredSessions = computed(() => {
+    let filtered = this.sessions();
+
+    // Filtro por fecha desde
+    const dateFrom = this.filterDateFrom();
+    if (dateFrom) {
+      const fromTime = new Date(dateFrom).getTime();
+      filtered = filtered.filter(s => s.id >= fromTime);
+    }
+
+    // Filtro por fecha hasta
+    const dateTo = this.filterDateTo();
+    if (dateTo) {
+      const toTime = new Date(dateTo).setHours(23, 59, 59, 999);
+      filtered = filtered.filter(s => s.id <= toTime);
+    }
+
+    // Filtro por inspector
+    const inspector = this.filterInspector().toLowerCase();
+    if (inspector) {
+      filtered = filtered.filter(s =>
+        s.inspections.some(i => i.inspector.toLowerCase().includes(inspector))
+      );
+    }
+
+    // Filtro por montacarga
+    const forklift = this.filterForklift().toLowerCase();
+    if (forklift) {
+      filtered = filtered.filter(s =>
+        s.inspections.some(i => 
+          i.forkliftName.toLowerCase().includes(forklift) ||
+          i.forkliftId.toLowerCase().includes(forklift)
+        )
+      );
+    }
+
+    // Filtro por estado
+    const status = this.filterStatus();
+    if (status !== 'all') {
+      filtered = filtered.filter(s => {
+        return s.inspections.some(i => {
+          const hasIssue = i.checklist.some(item => item.status === 'issue');
+          return status === 'issue' ? hasIssue : !hasIssue;
+        });
+      });
+    }
+
+    return filtered;
+  });
+
+  storageWarning = computed(() => this.storageService.getStorageWarning());
+
   ngOnInit() {
     this.loadHistory();
+    this.storageService.checkStorage();
   }
 
   async loadHistory() {
@@ -41,6 +108,32 @@ export class HistoryComponent implements OnInit {
 
   formatDate(timestamp: number): string {
     return new Date(timestamp).toLocaleString();
+  }
+
+  clearFilters() {
+    this.filterDateFrom.set('');
+    this.filterDateTo.set('');
+    this.filterInspector.set('');
+    this.filterStatus.set('all');
+    this.filterForklift.set('');
+  }
+
+  exportCurrentData() {
+    const sessionsToExport = this.filteredSessions();
+    if (sessionsToExport.length === 0) {
+      alert('No hay datos para exportar con los filtros actuales');
+      return;
+    }
+    this.exportService.exportToCSV(sessionsToExport);
+  }
+
+  exportStats() {
+    const sessions = this.sessions();
+    if (sessions.length === 0) {
+      alert('No hay datos para exportar');
+      return;
+    }
+    this.exportService.exportStatsToCSV(sessions);
   }
 
   generateReport(session: InspectionSession) {

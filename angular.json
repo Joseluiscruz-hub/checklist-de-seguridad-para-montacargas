@@ -17,12 +17,16 @@
               "browser": "."
             },
             "browser": "index.tsx",
-            "tsConfig": "tsconfig.json"
+            "tsConfig": "tsconfig.json",
+            "assets": [
+              "manifest.webmanifest"
+            ]
           },
           "configurations": {
             "production": {
               "outputHashing": "all",
-              "baseHref": "/checklist-de-seguridad-para-montacargas/"
+              "baseHref": "/",
+              "serviceWorker": "ngsw-config.json"
             },
             "development": {
               "optimization": false,

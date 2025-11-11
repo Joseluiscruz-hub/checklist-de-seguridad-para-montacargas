@@ -5,6 +5,54 @@
   </header>
 
   <div class="space-y-6">
+    <!-- Alerta de almacenamiento -->
+    @if (storageWarning()) {
+      <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-400 dark:border-yellow-600 rounded-lg p-4">
+        <p class="text-sm text-yellow-800 dark:text-yellow-200">{{ storageWarning() }}</p>
+      </div>
+    }
+
+    <!-- Storage Info -->
+    @if (storageInfo()) {
+      <div class="bg-white dark:bg-dark-card rounded-lg shadow p-4">
+        <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-3">
+          <i class="fas fa-database mr-2"></i>Almacenamiento Local
+        </h3>
+        <div class="space-y-3">
+          <div>
+            <div class="flex justify-between text-sm mb-1">
+              <span class="text-gray-600 dark:text-gray-400">Uso del almacenamiento</span>
+              <span class="font-semibold text-gray-800 dark:text-white">
+                {{ storageInfo().usagePercentage.toFixed(1) }}%
+              </span>
+            </div>
+            <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
+              <div class="h-3 rounded-full transition-all duration-300"
+                   [class.bg-green-500]="storageInfo().usagePercentage < 50"
+                   [class.bg-yellow-500]="storageInfo().usagePercentage >= 50 && storageInfo().usagePercentage < 80"
+                   [class.bg-red-500]="storageInfo().usagePercentage >= 80"
+                   [style.width.%]="storageInfo().usagePercentage">
+              </div>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <p class="text-gray-600 dark:text-gray-400">Utilizado</p>
+              <p class="font-semibold text-gray-800 dark:text-white">
+                {{ storageInfo().usageMB.toFixed(2) }} MB
+              </p>
+            </div>
+            <div>
+              <p class="text-gray-600 dark:text-gray-400">Disponible</p>
+              <p class="font-semibold text-gray-800 dark:text-white">
+                {{ storageInfo().quotaMB.toFixed(2) }} MB
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
     <!-- Dark Mode Setting -->
     <div class="bg-white dark:bg-dark-card rounded-lg shadow p-4">
       <div class="flex items-center justify-between">
