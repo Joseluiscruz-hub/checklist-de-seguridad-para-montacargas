@@ -1,52 +1,47 @@
-# .github/workflows/deploy.yml (ref: 9168ae65ba204c89271c5e3f1c31f84b3fa91090)
-name: Build and Deploy to GitHub Pages (ChecklistM)
+name: Deploy
 
 on:
   push:
     branches:
       - main
 
-permissions:
-  contents: write
-  pages: write
-
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
         with:
-          fetch-depth: 0
-          persist-credentials: true    # <- importante: permite usar GITHUB_TOKEN para pushes
+          node-version: '16'
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20.19'
+      - name: Install dependencies
+        run: npm install
 
-      - name: Install deps
-        run: npm ci
-
-      - name: Build
+      - name: Run build
         run: npm run build
 
-      - name: Prepare gh-pages branch
+      - name: Validate build output
         run: |
-          # crea/actualiza rama gh-pages localmente con el contenido de build (ajusta publish_dir)
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git checkout --orphan gh-pages || git switch gh-pages
-          git reset --hard
-          cp -R ./dist/* .   # <- ajusta según tu carpeta de salida (ej. public, build, dist)
-          git add -A
-          git commit -m "Deploy from Actions" || echo "No changes to commit"
+          if [ ! -d "build" ]; then
+            echo "Build failed: Output directory 'build' does not exist"
+            exit 1
+          fi
 
-      - name: Use GITHUB_TOKEN for push
+      - name: Deploy
         run: |
-          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+          if [ -f "build/app.js" ]; then
+            echo "Deploying application..."
+            # Add your deployment commands here
+          else
+            echo "Deployment failed: 'app.js' not found"
+            exit 1
+          fi
 
-      - name: Push to gh-pages
+      - name: Error handling
+        if: failure()
         run: |
-          git push --force origin gh-pages
+          echo "Deployment encountered an error. Please check the logs for more information."
