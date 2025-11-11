@@ -8,7 +8,7 @@
     "build": "ng build",
     "build:prod": "ng build --configuration production",
     "preview": "ng serve --configuration=production",
-    "deploy": "npm run build:prod && gh-pages -d dist"
+    "deploy": "node deploy-interactive.mjs"
   },
   "dependencies": {
     "@angular/build": "^20.3.0",
