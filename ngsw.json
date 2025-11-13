@@ -1,0 +1,92 @@
+{
+  "configVersion": 1,
+  "timestamp": 1763045049056,
+  "index": "/index.html",
+  "assetGroups": [
+    {
+      "name": "app",
+      "installMode": "prefetch",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [
+        "/chunk-3CY4RGAW.js",
+        "/chunk-3S2IHX64.js",
+        "/chunk-HPYFT727.js",
+        "/chunk-IB5HPKPK.js",
+        "/chunk-IH4AE3EP.js",
+        "/chunk-JERCIUQA.js",
+        "/chunk-LZUSRPUE.js",
+        "/chunk-MVGLMC7Y.js",
+        "/chunk-ODD4VDWD.js",
+        "/chunk-RGZFVPZW.js",
+        "/chunk-ZQS5H7K3.js",
+        "/index.html",
+        "/main-FHNYV3YT.js"
+      ],
+      "patterns": []
+    },
+    {
+      "name": "assets",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [],
+      "patterns": []
+    }
+  ],
+  "dataGroups": [
+    {
+      "name": "api",
+      "patterns": [
+        "https:\\/\\/cdn\\.tailwindcss\\.com\\/.*",
+        "https:\\/\\/cdnjs\\.cloudflare\\.com\\/.*"
+      ],
+      "strategy": "performance",
+      "maxSize": 100,
+      "maxAge": 604800000,
+      "timeoutMs": 10000,
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "version": 1
+    }
+  ],
+  "hashTable": {
+    "/chunk-3CY4RGAW.js": "76857e8ec907376da0c01e783f01074027e6cc6f",
+    "/chunk-3S2IHX64.js": "afff4c92ded827f6f5971478d470047ac4c4cfee",
+    "/chunk-HPYFT727.js": "0162c8d1f7d5701baf2105272c1a9d9b22372b9f",
+    "/chunk-IB5HPKPK.js": "a906e339929e8a205135235b646f610c9bf08dd1",
+    "/chunk-IH4AE3EP.js": "4f61a9c45258478de840a5a2e547b74cd507b686",
+    "/chunk-JERCIUQA.js": "e950fd91508dbfdc48282bd2612d7682c3d3e63c",
+    "/chunk-LZUSRPUE.js": "38198c8ee491d94fb3668170cfd48d8fec06f9db",
+    "/chunk-MVGLMC7Y.js": "60dab5b0d2a7617a815def13eaa2a5cc97f213ec",
+    "/chunk-ODD4VDWD.js": "28875c5ef112d1b4f13a0fdf22025b488bf875d4",
+    "/chunk-RGZFVPZW.js": "c7c79e6aba35ecf04d705e3e551cd615f258cdd3",
+    "/chunk-ZQS5H7K3.js": "c090c581654c299cb933e3cc702215fdf1632479",
+    "/index.html": "21bb67e7459944754de26ffb674e6fbd46ab24e4",
+    "/main-FHNYV3YT.js": "77e470e80e60257002e74583e4cda9076f385f24"
+  },
+  "navigationUrls": [
+    {
+      "positive": true,
+      "regex": "^\\/.*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*\\.[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*\\/.*$"
+    }
+  ],
+  "navigationRequestStrategy": "performance"
+}
