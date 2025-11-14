@@ -1,9 +1,11 @@
-import { Component, ChangeDetectionStrategy, signal, inject, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, inject, computed, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { FORKLIFTS, CHECKLIST_TEMPLATE, CREWS, AREAS } from '../../data/mock.data';
+import { CHECKLIST_TEMPLATE } from '../../data/mock.data';
 import { Forklift, Inspection, IncidentReport } from '../../models/checklist.model';
 import { DbService } from '../../services/db.service';
+import { DataService } from '../../services/data.service';
+import { SyncService } from '../../services/sync.service';
 import { ChecklistModalComponent } from '../../components/checklist-modal/checklist-modal.component';
 import { QrScannerComponent } from '../../components/qr-scanner/qr-scanner.component';
 import { IncidentReportModalComponent } from '../../components/incident-report-modal/incident-report-modal.component';
@@ -26,8 +28,10 @@ import { ProgressBarComponent } from '../../components/progress-bar/progress-bar
   templateUrl: './checklist.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ChecklistComponent {
+export class ChecklistComponent implements OnInit {
   private dbService = inject(DbService);
+  private dataService = inject(DataService);
+  private syncService = inject(SyncService);
   private router = inject(Router);
 
   view = signal<'home' | 'selection'>('home');
@@ -40,9 +44,15 @@ export class ChecklistComponent {
     shift: 'Matutino (06:00 - 14:00)'
   };
 
-  forklifts = signal<Forklift[]>(FORKLIFTS);
-  crews = signal(CREWS);
-  areas = signal(AREAS);
+  forklifts = signal<Forklift[]>([]);
+  crews = signal<{ name: string; color: string }[]>([]);
+  areas = signal<string[]>([]);
+
+  ngOnInit(): void {
+    this.dataService.getForklifts().subscribe(data => this.forklifts.set(data));
+    this.dataService.getCrews().subscribe(data => this.crews.set(data));
+    this.dataService.getAreas().subscribe(data => this.areas.set(data));
+  }
   
   currentSession = signal<Map<string, Inspection>>(new Map());
   
@@ -234,5 +244,16 @@ export class ChecklistComponent {
     this.toastIsError.set(isError);
     this.toastMessage.set(message);
     setTimeout(() => this.toastMessage.set(null), 3000);
+  }
+
+  async syncData() {
+    this.showToast('Sincronizando datos...');
+    try {
+      const { syncedSessions, syncedIncidents } = await this.syncService.syncPendingData();
+      this.showToast(`Sincronización completa. Sesiones: ${syncedSessions}, Incidentes: ${syncedIncidents}.`);
+    } catch (error) {
+      this.showToast('Error durante la sincronización.', true);
+      console.error('Sync failed:', error);
+    }
   }
 }

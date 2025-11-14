@@ -10,7 +10,8 @@ export interface ChecklistItem {
   category: string;
   status: 'ok' | 'issue' | 'pending';
   comment: string;
-  photo: string | null; // base64 string
+  photo: string | null; // URL
+  photoFile?: File; // For upload
 }
 
 export type Checklist = ChecklistItem[];
@@ -27,11 +28,13 @@ export interface Inspection {
   timestamp: number;
   inspectionDate: string;
   signature?: string | null;
+  synced?: boolean;
 }
 
 export interface InspectionSession {
   id: number; // timestamp
   inspections: Inspection[];
+  synced?: boolean;
 }
 
 export interface IncidentReport {
@@ -42,4 +45,5 @@ export interface IncidentReport {
   photo: string | null;
   reporter: string;
   timestamp: number;
+  synced?: boolean;
 }
