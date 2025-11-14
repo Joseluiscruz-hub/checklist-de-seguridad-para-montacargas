@@ -26,6 +26,7 @@
             "production": {
               "outputHashing": "all",
               "baseHref": "/",
+              "deployUrl": "/",
               "serviceWorker": "ngsw-config.json"
             },
             "development": {
