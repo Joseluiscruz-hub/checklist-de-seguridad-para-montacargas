@@ -9,6 +9,8 @@ import { QrScannerComponent } from '../../components/qr-scanner/qr-scanner.compo
 import { IncidentReportModalComponent } from '../../components/incident-report-modal/incident-report-modal.component';
 import { ManualsModalComponent } from '../../components/manuals-modal/manuals-modal.component';
 import { COCA_COLA_FEMSA_LOGO_BASE64 } from '../../assets/logo';
+import { ButtonComponent } from '../../components/button/button.component';
+import { ProgressBarComponent } from '../../components/progress-bar/progress-bar.component';
 
 @Component({
   selector: 'app-checklist',
@@ -17,7 +19,9 @@ import { COCA_COLA_FEMSA_LOGO_BASE64 } from '../../assets/logo';
     ChecklistModalComponent,
     QrScannerComponent,
     IncidentReportModalComponent,
-    ManualsModalComponent
+    ManualsModalComponent,
+    ButtonComponent,
+    ProgressBarComponent
   ],
   templateUrl: './checklist.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
